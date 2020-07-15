@@ -86,7 +86,7 @@ def resource_name_package(name):
     @rtype: str
     """    
 
-    if not PRN_SEPARATOR in name:
+    if PRN_SEPARATOR not in name:
         return None
     return name[:name.find(PRN_SEPARATOR)]
 
@@ -129,7 +129,7 @@ def is_legal_resource_name(name):
         return False
     m = RESOURCE_NAME_LEGAL_CHARS_P.match(name)
     # '//' check makes sure there isn't double-slashes
-    return m is not None and m.group(0) == name and not '//' in name
+    return m is not None and m.group(0) == name and '//' not in name
 
 BASE_RESOURCE_NAME_LEGAL_CHARS_P = re.compile('^[A-Za-z][\w_]*$') #ascii char followed by (alphanumeric, _)
 def is_legal_resource_base_name(name):

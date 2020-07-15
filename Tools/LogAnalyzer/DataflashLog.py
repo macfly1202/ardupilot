@@ -333,7 +333,7 @@ class DataflashLogHelper:
     @staticmethod
     def getTimeAtLine(logdata, lineNumber):
         '''returns the nearest GPS timestamp in milliseconds after the given line number'''
-        if not "GPS" in logdata.channels:
+        if "GPS" not in logdata.channels:
             raise Exception("no GPS log data found")
         # older logs use 'TIme', newer logs use 'TimeMS'
         # even newer logs use TimeUS
@@ -478,11 +478,7 @@ class DataflashLog(object):
         '''returns on successful log read (including bad lines if ignoreBadlines==True), will throw an Exception otherwise'''
         # TODO: dataflash log parsing code is pretty hacky, should re-write more methodically
         self.filename = logfile
-        if self.filename == '<stdin>':
-            f = sys.stdin
-        else:
-            f = open(self.filename, 'r')
-
+        f = sys.stdin if self.filename == '<stdin>' else open(self.filename, 'r')
         if format == 'bin':
             head = '\xa3\x95\x80\x80'
         elif format == 'log':
@@ -500,7 +496,6 @@ class DataflashLog(object):
 
         if head == '\xa3\x95\x80\x80':
             numBytes, lineNumber = self.read_binary(f, ignoreBadlines)
-            pass
         else:
             numBytes, lineNumber = self.read_text(f, ignoreBadlines)
 
@@ -645,14 +640,14 @@ class DataflashLog(object):
         numBytes = 0
         knownHardwareTypes = ["APM", "PX4", "MPNG"]
         for line in f:
-            lineNumber = lineNumber + 1
+            lineNumber += 1
             numBytes += len(line) + 1
             try:
                 #print("Reading line: %d" % lineNumber)
                 line = line.strip('\n\r')
                 tokens = line.split(', ')
                 # first handle the log header lines
-                if line == " Ready to drive." or line == " Ready to FLY.":
+                if line in [" Ready to drive.", " Ready to FLY."]:
                     continue
                 if line == "----------------------------------------":  # present in pre-3.0 logs
                     raise Exception("Log file seems to be in the older format (prior to self-describing logs), which isn't supported")
@@ -666,7 +661,7 @@ class DataflashLog(object):
                         self.freeRAM = int(tokens2[2])
                     elif tokens2[0] in knownHardwareTypes:
                         self.hardwareType = line      # not sure if we can parse this more usefully, for now only need to report it back verbatim
-                    elif (len(tokens2) == 2 or len(tokens2) == 3) and tokens2[1][0].lower() == "v":  # e.g. ArduCopter V3.1 (5c6503e2)
+                    elif len(tokens2) in [2, 3] and tokens2[1][0].lower() == "v":  # e.g. ArduCopter V3.1 (5c6503e2)
                         try:
                             self.set_vehicleType_from_MSG_vehicle(tokens2[0])
                         except ValueError:
@@ -682,7 +677,7 @@ class DataflashLog(object):
                         else:
                             raise Exception("")
                 else:
-                    if not tokens[0] in self.formats:
+                    if tokens[0] not in self.formats:
                         raise ValueError("Unknown Format {}".format(tokens[0]))
                     e = self.formats[tokens[0]](*tokens[1:])
                     self.process(lineNumber, e)
@@ -710,7 +705,7 @@ class DataflashLog(object):
         offset = 0
         while len(data) > offset + ctypes.sizeof(logheader):
             h = logheader.from_buffer(data, offset)
-            if not (h.head1 == 0xa3 and h.head2 == 0x95):
+            if h.head1 != 0xA3 or h.head2 != 0x95:
                 if ignoreBadlines == False:
                     raise ValueError(h)
                 else:

@@ -9,15 +9,16 @@ import re
 
 class Firmware():
     def __init__(self, date=None, platform=None, vehicletype=None, filepath=None, git_sha=None, frame=None):
-        self.atts = dict()
-        self.atts["date"] = date
-        self.atts["platform"] = platform
-        self.atts["vehicletype"] = vehicletype
-        self.atts["filepath"] = filepath
-        self.atts["git_sha"] = git_sha
-        self.atts["frame"] = frame
-        self.atts["release-type"] = None
-        self.atts["firmware-version"] = None
+        self.atts = {
+            "date": date,
+            "platform": platform,
+            "vehicletype": vehicletype,
+            "filepath": filepath,
+            "git_sha": git_sha,
+            "frame": frame,
+            "release-type": None,
+            "firmware-version": None,
+        }
 
     def __getitem__(self,what):
         return self.atts[what]
@@ -59,10 +60,10 @@ class ManifestGenerator():
 
     def looks_like_binaries_directory(self, dir):
         '''returns True if dir looks like it is a build_binaries.sh output directory'''
-        for entry in os.listdir(dir):
-            if entry in {"AntennaTracker", "Copter", "Plane", "Rover", "Sub"}:
-                return True
-        return False
+        return any(
+            entry in {"AntennaTracker", "Copter", "Plane", "Rover", "Sub"}
+            for entry in os.listdir(dir)
+        )
 
     def git_sha_from_git_version(self, filepath):
         '''parses get-version.txt (as emitted by build_binaries.sh, returns git sha from it'''
@@ -130,16 +131,24 @@ class ManifestGenerator():
 
                 firmware_format = "".join(file.split(".")[-1:])
 
-                if not vehicletype in firmware_data:
-                    firmware_data[vehicletype] = dict()
-                if not file_platform in firmware_data[vehicletype]:
-                    firmware_data[vehicletype][file_platform] = dict()
-                if not git_sha in firmware_data[vehicletype][file_platform]:
-                    firmware_data[vehicletype][file_platform][git_sha] = dict()
+                if vehicletype not in firmware_data:
+                    firmware_data[vehicletype] = {}
+                if file_platform not in firmware_data[vehicletype]:
+                    firmware_data[vehicletype][file_platform] = {}
+                if git_sha not in firmware_data[vehicletype][file_platform]:
+                    firmware_data[vehicletype][file_platform][git_sha] = {}
 
-                if not firmware_format in firmware_data[vehicletype][file_platform][git_sha]:
-                    firmware_data[vehicletype][file_platform][git_sha][firmware_format] = dict()
-                if not frame in firmware_data[vehicletype][file_platform][git_sha][firmware_format]:
+                if (
+                    firmware_format
+                    not in firmware_data[vehicletype][file_platform][git_sha]
+                ):
+                    firmware_data[vehicletype][file_platform][git_sha][firmware_format] = {}
+                if (
+                    frame
+                    not in firmware_data[vehicletype][file_platform][git_sha][
+                        firmware_format
+                    ]
+                ):
                     firmware_data[vehicletype][file_platform][git_sha][firmware_format][frame] = Firmware()
 
                 firmware = firmware_data[vehicletype][file_platform][git_sha][firmware_format][frame]
@@ -198,7 +207,7 @@ class ManifestGenerator():
         '''walks directory structure created by build_binaries, returns Python structure representing releases in that structure'''
         year_month_regex = re.compile("(?P<year>\d{4})-(?P<month>\d{2})")
 
-        xfirmwares = dict()
+        xfirmwares = {}
 
         # used to listdir basedir here, but since this is also a web document root, there's a lot of other stuff accumulated...
         vehicletypes = [ 'AntennaTracker', 'Copter', 'Plane', 'Rover', 'Sub' ]
@@ -257,12 +266,10 @@ class ManifestGenerator():
 
             firmware_json.append(some_json)
 
-        ret = {
+        return {
             "format-version": "1.0.0", # semantic versioning
             "firmware": firmware_json
         }
-
-        return ret
 
     def json(self):
         '''walk directory supplied in constructor, return json string'''

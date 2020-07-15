@@ -23,11 +23,7 @@ def process_lst(filename):
             frames.append(frame(last_code, frame_line.match(line).group(1)))
     h.close()
 
-if len(sys.argv) > 1:
-    dname = sys.argv[1]
-else:
-    dname = '.'
-
+dname = sys.argv[1] if len(sys.argv) > 1 else '.'
 for root, dirs, files in os.walk(dname):
     for f in files:
         if f.endswith(".lst"):

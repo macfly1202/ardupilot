@@ -69,9 +69,9 @@ post_id = opts.post_id
 
 if post_id is None:
     post_id = find_post_by_title(opts.post_title)
-    if post_id is None:
-        print('Failed to find post_title "%s"' % opts.post_title)
-        sys.exit(1)
+if post_id is None:
+    print('Failed to find post_title "%s"' % opts.post_title)
+    sys.exit(1)
 
 file = open(args[0])
 content = file.read()

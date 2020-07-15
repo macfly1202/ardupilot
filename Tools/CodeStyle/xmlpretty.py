@@ -18,10 +18,7 @@ dom = minidom.parseString(text)
 
 def contains_only_text(node):
     childNodes = node.childNodes[:]
-    for child in childNodes:
-        if child.nodeType != child.TEXT_NODE:
-            return False
-    return True
+    return all(child.nodeType == child.TEXT_NODE for child in childNodes)
 
 def foreach_tree(doc, root, func, level=0):
     func(doc, root, level)

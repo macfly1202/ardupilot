@@ -65,33 +65,33 @@ def test_SrvSpec():
     assert '' == spec.full_name
     assert '' == spec.short_name
     assert '' == spec.package
-        
+
     # tripwire
     assert repr(spec)
     assert str(spec)
 
     # exercise eq
     assert spec != 'spec'
-    assert not spec == 'spec'
-        
+    assert spec != 'spec'
+
     spec2 = SrvSpec(msg_a, msg_b, text)
     assert spec == spec2
-    assert not spec != spec2
-        
+    assert spec == spec2
+
     # - full_name
     spec2.full_name = 'something'
     assert spec != spec2
-    spec2.full_name = ''        
+    spec2.full_name = ''
     assert spec == spec2
 
     # - short_name
     spec2.short_name = 'something'
     assert spec != spec2
-    spec2.short_name = ''        
+    spec2.short_name = ''
     assert spec == spec2
     # - package
     spec2.package = 'something'
     assert spec != spec2
-    spec2.package = ''        
+    spec2.package = ''
     assert spec == spec2
         

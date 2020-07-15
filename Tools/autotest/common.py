@@ -281,8 +281,7 @@ def mission_count(filename):
     """Load a mission from a file and return number of waypoints."""
     wploader = mavwp.MAVWPLoader()
     wploader.load(filename)
-    num_wp = wploader.count()
-    return num_wp
+    return wploader.count()
 
 
 def sim_location(mav):

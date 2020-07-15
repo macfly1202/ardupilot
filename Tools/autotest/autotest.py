@@ -41,11 +41,7 @@ def get_default_params(atype, binary):
 
     # use rover simulator so SITL is not starved of input
     HOME = mavutil.location(40.071374969556928, -105.22978898137808, 1583.702759, 246)
-    if "plane" in binary or "rover" in binary:
-        frame = "rover"
-    else:
-        frame = "+"
-
+    frame = "rover" if "plane" in binary or "rover" in binary else "+"
     home = "%f,%f,%u,%u" % (HOME.lat, HOME.lng, HOME.alt, HOME.heading)
     sitl = util.start_SITL(binary, wipe=True, model=frame, home=home, speedup=10, unhide_parameters=True)
     mavproxy = util.start_MAVProxy_SITL(atype)
@@ -162,10 +158,9 @@ def alarm_handler(signum, frame):
 
 def should_run_step(step):
     """See if a step should be skipped."""
-    for skip in skipsteps:
-        if fnmatch.fnmatch(step.lower(), skip.lower()):
-            return False
-    return True
+    return not any(
+        fnmatch.fnmatch(step.lower(), skip.lower()) for skip in skipsteps
+    )
 
 __bin_names = {
     "ArduCopter" : "arducopter",
@@ -186,11 +181,7 @@ def binary_path(step, debug=False):
         # cope with builds that don't have a specific binary
         return None
 
-    if debug:
-        binary_basedir = "sitl-debug"
-    else:
-        binary_basedir = "sitl"
-
+    binary_basedir = "sitl-debug" if debug else "sitl"
     binary = util.reltopdir(os.path.join('build', binary_basedir, 'bin', binary_name))
     if not os.path.exists(binary):
         if os.path.exists(binary + ".exe"):

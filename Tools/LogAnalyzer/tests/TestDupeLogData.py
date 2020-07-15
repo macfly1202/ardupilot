@@ -15,10 +15,7 @@ class TestDupeLogData(Test):
 		'''return the line number where a match is found, otherwise return False'''
 
 		# ignore if all data in sample is the same value
-		nSame = 0
-		for s in sample:
-			if s[1] == sample[0][1]:
-				nSame += 1
+		nSame = sum(1 for s in sample if s[1] == sample[0][1])
 		if nSame == 20:
 			return False
 

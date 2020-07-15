@@ -22,12 +22,12 @@ class TestIMUMatch(Test):
         self.result = TestResult()
         self.result.status = TestResult.StatusType.GOOD
 
-        if ("IMU" in logdata.channels) and (not "IMU2" in logdata.channels):
+        if "IMU" in logdata.channels and "IMU2" not in logdata.channels:
             self.result.status = TestResult.StatusType.NA
             self.result.statusMessage = "No IMU2"
             return
 
-        if (not "IMU" in logdata.channels) or (not "IMU2" in logdata.channels):
+        if "IMU" not in logdata.channels or "IMU2" not in logdata.channels:
             self.result.status = TestResult.StatusType.UNKNOWN
             self.result.statusMessage = "No IMU log data"
             return

@@ -153,7 +153,7 @@ if args.triangle:
         indexes += l
 
     for i in indexes:
-        if 0 > i or i >= len(ico.triangles):
+        if i < 0 or i >= len(ico.triangles):
             print(
                 'Triangle index must be in the range [0,%d)' % len(ico.triangles),
                 file=sys.stderr,
@@ -170,7 +170,7 @@ if args.section:
         sections += l
 
     for s in sections:
-        if 0 > s or s >= 4 * len(ico.triangles):
+        if s < 0 or s >= 4 * len(ico.triangles):
             print(
                 'Section must be in the range [0,%d)' % 4 * len(ico.triangles),
                 file=sys.stderr,

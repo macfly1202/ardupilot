@@ -23,12 +23,8 @@ class mavgen(Task.Task):
 
         entry_point = self.inputs[0]
         queue = [entry_point]
-        head = 0
-
-        while head < len(queue):
-            node = queue[head]
-            head += 1
-
+        for item in queue:
+            node = item
             tree = et.parse(node.abspath())
             root = tree.getroot()
             includes = root.findall('include')
@@ -45,7 +41,7 @@ class mavgen(Task.Task):
                     node.parent.path_from(entry_point.parent),
                     path
                 )
-                if not path in names:
+                if path not in names:
                     names.append(path)
 
         return nodes, names

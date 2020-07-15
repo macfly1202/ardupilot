@@ -350,9 +350,9 @@ def do_build(vehicledir, opts, frame_options):
         progress("Build failed; cleaning and rebuilding")
         run_cmd_blocking("Cleaning", ["make", "clean"])
         _, sts = run_cmd_blocking("Building %s" % build_target, build_cmd)
-        if sts != 0:
-            progress("Build failed")
-            sys.exit(1)
+    if sts != 0:
+        progress("Build failed")
+        sys.exit(1)
 
     os.chdir(old_dir)
 
@@ -367,10 +367,8 @@ def get_user_locations_path():
         'XDG_CONFIG_DIR',
         os.path.join(os.environ.get('HOME', '.'), '.config'))
 
-    user_locations_path = os.path.join(
+    return os.path.join(
         config_dir, 'ardupilot', 'locations.txt')
-
-    return user_locations_path
 
 
 def find_location_by_name(autotest, locname):
@@ -420,8 +418,7 @@ def run_in_terminal_window(autotest, name, cmd):
 
     """Execute the run_in_terminal_window.sh command for cmd"""
     global windowID
-    runme = [os.path.join(autotest, "run_in_terminal_window.sh"), name]
-    runme.extend(cmd)
+    runme = [os.path.join(autotest, "run_in_terminal_window.sh"), name, *cmd]
     progress_cmd("Run " + name, runme)
 
     if under_macos():
@@ -731,9 +728,8 @@ if not os.path.exists(vehicle_dir):
     print("vehicle directory (%s) does not exist" % (vehicle_dir,))
     sys.exit(1)
 
-if not cmd_opts.hil:
-    if cmd_opts.instance == 0:
-        kill_tasks()
+if not cmd_opts.hil and cmd_opts.instance == 0:
+    kill_tasks()
 
 if cmd_opts.tracker:
     start_antenna_tracker(find_autotest_dir(), cmd_opts)
@@ -762,10 +758,7 @@ else:
         do_build(vehicle_dir, cmd_opts, frame_infos)
 
     if cmd_opts.build_system == "waf":
-        if cmd_opts.debug:
-            binary_basedir = "build/sitl-debug"
-        else:
-            binary_basedir = "build/sitl"
+        binary_basedir = "build/sitl-debug" if cmd_opts.debug else "build/sitl"
         vehicle_binary = os.path.join(find_root_dir(), binary_basedir, frame_infos["waf_target"])
     else:
         vehicle_binary = os.path.join(vehicle_dir, cmd_opts.vehicle + ".elf")

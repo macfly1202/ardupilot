@@ -22,7 +22,7 @@ class TestPitchRollCoupling(Test):
             self.result.status = TestResult.StatusType.NA
             return
 
-        if not "ATT" in logdata.channels:
+        if "ATT" not in logdata.channels:
             self.result.status = TestResult.StatusType.UNKNOWN
             self.result.statusMessage = "No ATT log data"
             return

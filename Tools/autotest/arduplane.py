@@ -70,7 +70,7 @@ def fly_left_circuit(mavproxy, mav):
 
     print("Flying left circuit")
     # do 4 turns
-    for i in range(0, 4):
+    for i in range(4):
         # hard left
         print("Starting turn %u" % i)
         mavproxy.send('rc 1 1000\n')
@@ -271,8 +271,7 @@ def test_stabilize(mavproxy, mav, count=1):
     mavproxy.send("mode STABILIZE\n")
     wait_mode(mav, 'STABILIZE')
 
-    count = 1
-    while count > 0:
+    for count in range(1, 0, -1):
         print("Starting roll")
         mavproxy.send('rc 1 2000\n')
         if not wait_roll(mav, -150, accuracy=90):
@@ -281,8 +280,6 @@ def test_stabilize(mavproxy, mav, count=1):
             return False
         if not wait_roll(mav, 0, accuracy=90):
             return False
-        count -= 1
-
     mavproxy.send('rc 1 1500\n')
     if not wait_roll(mav, 0, accuracy=5):
         return False
@@ -328,16 +325,13 @@ def test_acro(mavproxy, mav, count=1):
     mavproxy.send("mode ACRO\n")
     wait_mode(mav, 'ACRO')
 
-    count = 2
-    while count > 0:
+    for count in range(2, 0, -1):
         print("Starting loop")
         mavproxy.send('rc 2 1000\n')
         if not wait_pitch(mav, -60, accuracy=20):
             return False
         if not wait_pitch(mav, 0, accuracy=20):
             return False
-        count -= 1
-
     mavproxy.send('rc 2 1500\n')
 
     # back to FBWA
@@ -366,7 +360,7 @@ def test_FBWB(mavproxy, mav, count=1, mode='FBWB'):
 
     print("Flying right circuit")
     # do 4 turns
-    for i in range(0, 4):
+    for i in range(4):
         # hard left
         print("Starting turn %u" % i)
         mavproxy.send('rc 1 1800\n')
@@ -381,7 +375,7 @@ def test_FBWB(mavproxy, mav, count=1, mode='FBWB'):
 
     print("Flying rudder left circuit")
     # do 4 turns
-    for i in range(0, 4):
+    for i in range(4):
         # hard left
         print("Starting turn %u" % i)
         mavproxy.send('rc 4 1900\n')

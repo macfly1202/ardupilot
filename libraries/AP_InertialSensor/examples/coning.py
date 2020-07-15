@@ -202,7 +202,7 @@ class Tian_integrator:
 filter2p_1khz_30hz_data = {}
 def filter2p_1khz_30hz(sample, key):
     global filter2p_1khz_30hz_data
-    if not key in filter2p_1khz_30hz_data:
+    if key not in filter2p_1khz_30hz_data:
         filter2p_1khz_30hz_data[key] = (0.0,0.0)
     (delay_element_1, delay_element_2) = filter2p_1khz_30hz_data[key]
     sample_freq = 1000

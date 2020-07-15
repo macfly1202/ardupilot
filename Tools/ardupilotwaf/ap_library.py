@@ -207,4 +207,4 @@ def ap_library_register_for_check(self):
         tsk.compiled_task = t
 
 def configure(cfg):
-    cfg.env.AP_LIBRARIES_OBJECTS_KW = dict()
+    cfg.env.AP_LIBRARIES_OBJECTS_KW = {}

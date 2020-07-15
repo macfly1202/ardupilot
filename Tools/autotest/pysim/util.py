@@ -12,10 +12,7 @@ import pexpect
 
 from . rotmat import Matrix3, Vector3
 
-if (sys.version_info[0] >= 3):
-    ENCODING = 'ascii'
-else:
-    ENCODING = None
+ENCODING = 'ascii' if (sys.version_info[0] >= 3) else None
 
 def m2ft(x):
     """Meters to feet."""
@@ -181,8 +178,7 @@ def make_safe_filename(text):
     """Return a version of text safe for use as a filename."""
     r = re.compile("([^a-zA-Z0-9_.+-])")
     text.replace('/', '-')
-    filename = r.sub(lambda m: "%" + str(hex(ord(str(m.group(1))))).upper(), text)
-    return filename
+    return r.sub(lambda m: "%" + str(hex(ord(str(m.group(1))))).upper(), text)
 
 
 def valgrind_log_filepath(binary, model):
@@ -274,11 +270,9 @@ def expect_setup_callback(e, callback):
         tstart = time.time()
         while time.time() < tstart + timeout:
             try:
-                ret = e.expect_saved(pattern, timeout=1)
-                return ret
+                return e.expect_saved(pattern, timeout=1)
             except pexpect.TIMEOUT:
                 e.expect_user_callback(e)
-                pass
         print("Timed out looking for %s" % pattern)
         raise pexpect.TIMEOUT(timeout)
 
@@ -518,11 +512,7 @@ def apparent_wind(wind_sp, obj_speed, alpha):
     delta = wind_sp * cos(alpha)
     x = wind_sp**2 + obj_speed**2 + 2 * obj_speed * delta
     rel_speed = sqrt(x)
-    if rel_speed == 0:
-        beta = pi
-    else:
-        beta = acos((delta + obj_speed) / rel_speed)
-
+    beta = pi if rel_speed == 0 else acos((delta + obj_speed) / rel_speed)
     return (rel_speed, beta)
 
 

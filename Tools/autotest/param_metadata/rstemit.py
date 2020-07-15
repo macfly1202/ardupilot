@@ -41,8 +41,7 @@ Complete Parameter List
         self.t = ''
 
     def escape(self, s):
-        ret = re.sub(self.rstescape, "\\\\\g<1>", s)
-        return ret
+        return re.sub(self.rstescape, "\\\\\g<1>", s)
 
     def close(self):
         self.f.write(self.preamble)
@@ -64,7 +63,7 @@ Complete Parameter List
             rowheading_lines.extend([""] * (height - len(rowheading_lines)))
 
         out_lines = []
-        for i in range(0, height):
+        for i in range(height):
             out_line = ""
             if rowheading is not None:
                 rowheading_line = rowheading_lines[i]
@@ -119,7 +118,7 @@ Complete Parameter List
                 all_rowheadings.append("")
             all_rowheadings.extend(rowheadings)
 
-        for rownum in range(0, len(rows_to_check)):
+        for rownum in range(len(rows_to_check)):
             row = rows_to_check[rownum]
             values_to_check = []
             if rowheadings is not None:
@@ -160,7 +159,7 @@ Complete Parameter List
                 rowheading = ""
             ret += self.tablify_row(rowheading, headings, widths, heights[0]) + "\n"
             ret += heading_bar + "\n"
-        for i in range(0, len(rows)):
+        for i in range(len(rows)):
             rowheading = None
             height = i
             if rowheadings is not None:
@@ -206,10 +205,7 @@ Complete Parameter List
             if not hasattr(param, 'DisplayName') or not hasattr(param, 'Description'):
                 continue
             d = param.__dict__
-            if self.annotate_with_vehicle:
-                name = param.name
-            else:
-                name = param.name.split(':')[-1]
+            name = param.name if self.annotate_with_vehicle else param.name.split(':')[-1]
             tag = '%s: %s' % (self.escape(name), self.escape(param.DisplayName),)
             tag = tag.strip()
             reference = param.name

@@ -182,7 +182,7 @@ def takes_allocator(type):
     @param type: The type
     @type: str
     """
-    return not type in ['byte', 'int8', 'int16', 'int32', 'int64',
+    return type not in ['byte', 'int8', 'int16', 'int32', 'int64',
                         'char', 'uint8', 'uint16', 'uint32', 'uint64',
                         'float32', 'float64', 'bool', 'time', 'duration']
 
@@ -241,14 +241,15 @@ def generate_initializer_list(spec, container_gets_allocator):
     for field in spec.parsed_fields():
         val = default_value(field.base_type)
         use_alloc = takes_allocator(field.base_type)
-        if (field.is_array):
-            if (field.array_len is None and container_gets_allocator):
-                yield '  %s %s(_alloc)'%(op, field.name)
-            else:
-                yield '  %s %s()'%(op, field.name)
+        if (
+            field.is_array
+            and (field.array_len is None and container_gets_allocator)
+            or not field.is_array
+            and (container_gets_allocator and use_alloc)
+        ):
+            yield '  %s %s(_alloc)'%(op, field.name)
+        elif field.is_array:
+            yield '  %s %s()'%(op, field.name)
         else:
-            if (container_gets_allocator and use_alloc):
-                yield '  %s %s(_alloc)'%(op, field.name)
-            else:
-                yield '  %s %s(%s)'%(op, field.name, val)
+            yield '  %s %s(%s)'%(op, field.name, val)
         op = ','

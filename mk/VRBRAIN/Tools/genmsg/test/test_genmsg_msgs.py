@@ -88,8 +88,8 @@ def test_parse_type():
             pass
 
 def test_Constant():
-    import genmsg.msgs    
-    vals = [random.randint(0, 1000) for i in range(0, 3)]
+    import genmsg.msgs
+    vals = [random.randint(0, 1000) for i in range(3)]
     type_, name, val = [str(x) for x in vals]
     x = genmsg.msgs.Constant(type_, name, val, str(val))
     assert type_ == x.type
@@ -98,7 +98,7 @@ def test_Constant():
     assert x == genmsg.msgs.Constant(type_, name, val, str(val))
 
     assert x != 1
-    assert not x == 1
+    assert x != 1
     assert x != genmsg.msgs.Constant('baz', name, val, str(val))
     assert x != genmsg.msgs.Constant(type_, 'foo', val, str(val))
     assert x != genmsg.msgs.Constant(type_, name, 'foo', 'foo')
@@ -106,7 +106,7 @@ def test_Constant():
     # tripwire
     assert repr(x)
     assert str(x)
-    
+
     try:
         genmsg.msgs.Constant(None, name, val, str(val))
         assert False, "should have raised"
@@ -123,7 +123,7 @@ def test_Constant():
         genmsg.msgs.Constant(type_, name, val, None)
         assert False, "should have raised"        
     except: pass
-    
+
     try:
         x.foo = 'bar'
         assert False, 'Constant should not allow arbitrary attr assignment'
@@ -218,13 +218,13 @@ def test_Field():
     assert field != Field('bar', 'string')
     assert field != Field('foo', 'int32')
     assert field != 1
-    assert not field == 1    
+    assert field != 1    
 
     assert field.name == 'foo'
     assert field.type == 'string'
     assert field.base_type == 'string'
     assert field.is_array == False
-    assert field.array_len == None
+    assert field.array_len is None
     assert field.is_header == False
     assert field.is_builtin == True
 
@@ -232,7 +232,7 @@ def test_Field():
     assert field.type == 'std_msgs/String'
     assert field.base_type == 'std_msgs/String'
     assert field.is_array == False
-    assert field.array_len == None
+    assert field.array_len is None
     assert field.is_header == False
     assert field.is_builtin == False
 
@@ -248,7 +248,7 @@ def test_Field():
     assert field.type == 'std_msgs/String[]'
     assert field.base_type == 'std_msgs/String'
     assert field.is_array == True
-    assert field.array_len == None
+    assert field.array_len is None
     assert field.is_header == False
     assert field.is_builtin == False
 

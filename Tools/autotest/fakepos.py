@@ -79,17 +79,16 @@ pitchDeg = 0
 pitchMax = None
 rollMax = None
 
-if True:
-    pitchRate = 1
-    pitchMax = 45
-    rollMax = 45
+pitchRate = 1
+pitchMax = 45
+rollMax = 45
 
 while True:
 
     xAccel = sin(radians(pitchDeg))
     yAccel = -sin(radians(rollDeg)) * cos(radians(pitchDeg))
     zAccel = -cos(radians(rollDeg)) * cos(radians(pitchDeg))
-    scale = 9.81 / sqrt((xAccel*xAccel) + (yAccel*yAccel) + (zAccel*zAccel))
+    scale = 9.81 / sqrt(xAccel*xAccel + yAccel**2 + zAccel**2)
     xAccel *= scale
     yAccel *= scale
     zAccel *= scale

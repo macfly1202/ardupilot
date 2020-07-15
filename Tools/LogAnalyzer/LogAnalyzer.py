@@ -143,10 +143,7 @@ class TestSuite(object):
         # open the file for writing
         xml = None
         try:
-            if xmlFile == '-':
-                xml = sys.stdout
-            else:
-                xml = open(xmlFile, 'w')
+            xml = sys.stdout if xmlFile == '-' else open(xmlFile, 'w')
         except:
             sys.stderr.write("Error opening output xml file: %s" % xmlFile)
             sys.exit(1)
@@ -182,25 +179,21 @@ class TestSuite(object):
             if not test.enable:
                 continue
             xml.write("  <result>\n")
+            xml.write("    <name>" + escape(test.name) + "</name>\n")
             if test.result.status == TestResult.StatusType.GOOD:
-                xml.write("    <name>" + escape(test.name) + "</name>\n")
                 xml.write("    <status>GOOD</status>\n")
                 xml.write("    <message>" + escape(test.result.statusMessage) + "</message>\n")
             elif test.result.status == TestResult.StatusType.FAIL:
-                xml.write("    <name>" + escape(test.name) + "</name>\n")
                 xml.write("    <status>FAIL</status>\n")
                 xml.write("    <message>" + escape(test.result.statusMessage) + "</message>\n")
                 xml.write("    <data>(test data will be embedded here at some point)</data>\n")
             elif test.result.status == TestResult.StatusType.WARN:
-                xml.write("    <name>" + escape(test.name) + "</name>\n")
                 xml.write("    <status>WARN</status>\n")
                 xml.write("    <message>" + escape(test.result.statusMessage) + "</message>\n")
                 xml.write("    <data>(test data will be embedded here at some point)</data>\n")
             elif test.result.status == TestResult.StatusType.NA:
-                xml.write("    <name>" + escape(test.name) + "</name>\n")
                 xml.write("    <status>NA</status>\n")
             else:
-                xml.write("    <name>" + escape(test.name) + "</name>\n")
                 xml.write("    <status>UNKNOWN</status>\n")
                 xml.write("    <message>" + escape(test.result.statusMessage) + "</message>\n")
             xml.write("  </result>\n")

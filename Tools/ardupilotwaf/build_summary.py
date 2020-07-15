@@ -178,7 +178,7 @@ def size_summary(bld, nodes):
     l = []
     for n in nodes:
         path = n
-        if isinstance(n, Node.Node):
+        if isinstance(path, Node.Node):
             path = n.path_from(bld.bldnode)
         l.append(dict(binary_path=path))
 

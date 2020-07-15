@@ -346,11 +346,7 @@ def build_command(name,
 def _select_programs_from_group(bld):
     groups = bld.options.program_group
     if not groups:
-        if bld.targets:
-            groups = []
-        else:
-            groups = ['bin']
-
+        groups = [] if bld.targets else ['bin']
     if 'all' in groups:
         groups = _grouped_programs.keys()
 

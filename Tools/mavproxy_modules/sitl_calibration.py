@@ -102,21 +102,22 @@ class CalController(object):
         self.mpstate.functions.process_stdin('servo set 5 1250')
 
     def handle_simstate(self, m):
-        if self.general_state == 'attitude':
-            q = quaternion.Quaternion((m.roll, m.pitch, m.yaw))
-            q.normalize()
-            d1 = abs(self.desired_quaternion.q - q.q)
-            d2 = abs(self.desired_quaternion.q + q.q)
-            if (d1 <= 1e-2).all() or (d2 <= 1e-2).all():
-                self.desired_quaternion_close_count += 1
-            else:
-                self.desired_quaternion_close_count = 0
+        if self.general_state != 'attitude':
+            return
+        q = quaternion.Quaternion((m.roll, m.pitch, m.yaw))
+        q.normalize()
+        d1 = abs(self.desired_quaternion.q - q.q)
+        d2 = abs(self.desired_quaternion.q + q.q)
+        if (d1 <= 1e-2).all() or (d2 <= 1e-2).all():
+            self.desired_quaternion_close_count += 1
+        else:
+            self.desired_quaternion_close_count = 0
 
-            if self.desired_quaternion_close_count == 5:
-                self.general_state = 'idle'
-                if callable(self.attitude_callback):
-                    self.attitude_callback()
-                    self.attitude_callback = None
+        if self.desired_quaternion_close_count == 5:
+            self.general_state = 'idle'
+            if callable(self.attitude_callback):
+                self.attitude_callback()
+                self.attitude_callback = None
 
     def mavlink_packet(self, m):
         if not self.active:

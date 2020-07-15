@@ -73,7 +73,7 @@ def get_msg_file(package, base_type, search_path, ext=EXT_MSG):
     log("msg_file(%s, %s, %s)" % (package, base_type, str(search_path)))
     if not isinstance(search_path, dict):
         raise ValueError("search_path must be a dictionary of {namespace: dirpath}")
-    if not package in search_path:
+    if package not in search_path:
         raise MsgNotFound("Cannot locate message [%s]: unknown package [%s] on search path [%s]" \
                           % (base_type, package, search_path))
     else:
@@ -223,13 +223,14 @@ def _load_field_line(orig_line, package_context):
         raise InvalidMsgSpec("%s is not a legal message field name"%name)
     if not is_valid_msg_type(field_type):
         raise InvalidMsgSpec("%s is not a legal message field type"%field_type)
-    if package_context and not SEP in field_type:
-        if field_type == HEADER:
-            field_type = HEADER_FULL_NAME
-        elif not is_builtin(bare_msg_type(field_type)):
-            field_type = "%s/%s"%(package_context, field_type)
-    elif field_type == HEADER:
+    if field_type == HEADER:
         field_type = HEADER_FULL_NAME
+    elif (
+        package_context
+        and SEP not in field_type
+        and not is_builtin(bare_msg_type(field_type))
+    ):
+        field_type = "%s/%s"%(package_context, field_type)
     return field_type, name
 
 def _strip_comments(line):

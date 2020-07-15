@@ -18,7 +18,7 @@ class TestBalanceTwist(Test):
             return
 
         self.result.status = TestResult.StatusType.UNKNOWN
-        if not "RCOU" in logdata.channels:
+        if "RCOU" not in logdata.channels:
             return
 
         ch = []

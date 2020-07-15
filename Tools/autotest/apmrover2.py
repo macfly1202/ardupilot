@@ -45,7 +45,7 @@ def drive_left_circuit(mavproxy, mav):
 
     print("Driving left circuit")
     # do 4 turns
-    for i in range(0, 4):
+    for i in range(4):
         # hard left
         print("Starting turn %u" % i)
         mavproxy.send('rc 1 1000\n')

@@ -38,10 +38,7 @@ def dump_logs(atype):
     mavproxy.expect("logs enabled:")
     lognums = []
     i = mavproxy.expect(["No logs", "(\d+) logs"])
-    if i == 0:
-        numlogs = 0
-    else:
-        numlogs = int(mavproxy.match.group(1))
+    numlogs = 0 if i == 0 else int(mavproxy.match.group(1))
     for i in range(numlogs):
         mavproxy.expect("Log (\d+)")
         lognums.append(int(mavproxy.match.group(1)))

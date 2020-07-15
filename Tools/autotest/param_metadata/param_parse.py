@@ -82,7 +82,7 @@ for vehicle in vehicles:
                 setattr(l, field[0], field[1])
             else:
                 error("unknown parameter metadata field '%s'" % field[0])
-        if not any(l.name == parsed_l.name for parsed_l in libraries):
+        if all(l.name != parsed_l.name for parsed_l in libraries):
             libraries.append(l)
 
     for param_match in param_matches:
@@ -159,7 +159,7 @@ def process_library(library, pathprefix=None):
                     setattr(l, field[0], field[1])
                 else:
                     error("unknown parameter metadata field '%s'" % field[0])
-            if not any(l.name == parsed_l.name for parsed_l in libraries):
+            if all(l.name != parsed_l.name for parsed_l in libraries):
                 l.name = library.name + l.name
                 debug("Group name: %s" % l.name)
                 process_library(l, os.path.dirname(libraryfname))
@@ -206,9 +206,12 @@ def validate(param):
             error("Max value not number: %s %s" % (param.name, max_value))
             return
     # Validate units
-    if (hasattr(param, "Units")):
-        if (param.__dict__["Units"] != "") and (param.__dict__["Units"] not in known_units):
-            error("unknown units field '%s'" % param.__dict__["Units"])
+    if (
+        (hasattr(param, "Units"))
+        and (param.__dict__["Units"] != "")
+        and (param.__dict__["Units"] not in known_units)
+    ):
+        error("unknown units field '%s'" % param.__dict__["Units"])
 
 for vehicle in vehicles:
     for param in vehicle.params:

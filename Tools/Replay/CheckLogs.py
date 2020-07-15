@@ -148,8 +148,6 @@ def check_logs():
         os.unlink("replay_results.txt")
     except Exception as ex:
         print(ex)
-        pass
-
     for logfile in log_list:
         run_replay(logfile)
 
@@ -167,7 +165,7 @@ def create_checked_logs():
     for f in full_file_list:
         if not f.endswith("-checked.bin"):
             file_list.append(f)
-    if len(file_list) == 0:
+    if not file_list:
         print("No files to process")
         sys.exit(1)
     for f in file_list:
